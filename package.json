@@ -1,0 +1,29 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "An Amazon-like storefront (CLI) using Node.js and MySQL",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rwest88/Bamazon.git"
+  },
+  "keywords": [
+    "bamazon",
+    "CLI",
+    "node",
+    "MySQL"
+  ],
+  "author": "Ryan Weston",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rwest88/Bamazon/issues"
+  },
+  "homepage": "https://github.com/rwest88/Bamazon#readme",
+  "dependencies": {
+    "inquirer": "^5.2.0",
+    "mysql": "^2.15.0"
+  }
+}
