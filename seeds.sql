@@ -43,4 +43,4 @@ VALUES ("Echo (2nd Generation) – Charcoal Fabric + Echo Dot", "Amazon Devices"
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("Pandemic", "Toys & Games", 2999, 100);
 
-SELECT * FROM products
+SELECT * FROM products;

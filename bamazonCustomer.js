@@ -33,6 +33,8 @@ function makeTable() {
 }
 
 function promptCustomer(products) {
+
+  // Prompt customer for item
   inquirer.prompt({
     type: 'input',
     name: 'choice',
@@ -44,8 +46,13 @@ function promptCustomer(products) {
     }
   }).then((res) => {
     res.choice -= 1;
-    // if none in stock, exit, else: 
-    console.log('You chose ' + products[res.choice].product_name);
+    if (products[res.choice].stock_quantity == 0) {
+      console.log("Sorry, none in stock!");
+      return promptCustomer(products);
+    }
+    console.log('You chose ' + products[res.choice].product_name + ".\n");
+
+    // Prompt customer for quantity
     inquirer.prompt({
       type: 'input',
       name: 'quantity',
@@ -57,8 +64,39 @@ function promptCustomer(products) {
         return true;
       }
     }).then((res2) => {
-      console.log('You just purchased (' + res2.quantity + '):');
-      console.log(products[res.choice].product_name);
-    })
+      connection.query('UPDATE products SET stock_quantity = ? WHERE item_id = ?', 
+      [products[res.choice].stock_quantity - res2.quantity, products[res.choice].item_id],
+      function(err, res3) {
+        if (err) return console.log(err);
+        chargeCustomer(products, res, res2)
+
+        // prompt customer for continue
+        inquirer.prompt({
+          type: 'input',
+          name: 'choice',
+          message: 'Would you like to make another purchase? (Y/N):'
+        }).then((res4) => {
+          if (res4.choice.toLowerCase() == 'y') makeTable();
+          else process.exit();
+        });
+      });
+    });
   });
+}
+
+function chargeCustomer(products, res, res2) {
+  var tax = parseInt(products[res.choice].price * res2.quantity * 0.05) / 100;
+  var subtotal = parseInt(products[res.choice].price * 100) / 100 * res2.quantity / 100;
+  var total = subtotal + tax;
+  console.log('\nYou just purchased (' + res2.quantity + '):');
+  console.log(products[res.choice].product_name + " ($" + products[res.choice].price / 100 + ")");
+  console.log('x ' + res2.quantity 
+    + "..........................................................................($" 
+    + subtotal + ")");
+  console.log("Sales tax:.....................................................................($" 
+    + tax + ")");
+  console.log("Total:......................................................................($" 
+    + total + ")\n");
+  console.log("We've just charged $" 
+    + total + " to your credit card. You will receive no email confirmation. Thanks!\n");
 }
