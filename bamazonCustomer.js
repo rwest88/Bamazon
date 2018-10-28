@@ -95,7 +95,7 @@ function chargeCustomer(products, res, res2) {
     + subtotal + ")");
   console.log("Sales tax:.....................................................................($" 
     + tax + ")");
-  console.log("Total:......................................................................($" 
+  console.log("Total:........................................................................($" 
     + total + ")\n");
   console.log("We've just charged $" 
     + total + " to your credit card. You will receive no email confirmation. Thanks!\n");

@@ -23,4 +23,4 @@ node bamazonCustomer.js
 ```
 
 ### Screenshots
-coming soon!
+![Alt text](relative/path/to/screenshot.png?raw=true "bamazon")
