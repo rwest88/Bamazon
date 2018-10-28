@@ -23,4 +23,4 @@ node bamazonCustomer.js
 ```
 
 ### Screenshots
-![Alt text](relative/path/to/screenshot.png?raw=true "bamazon")
+![Alt text](screenshot.png?raw=true "bamazon")
