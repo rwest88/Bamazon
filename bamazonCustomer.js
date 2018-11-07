@@ -18,7 +18,7 @@ connection.connect((err) => {
 function makeTable() {
 
   connection.query('SELECT * FROM products', (err, res) => {
-    console.log('id || Product Name                                                                   || Department           || Price    || Quantity       ');
+    console.log('\nid || Product Name                                                                   || Department           || Price    || Quantity       ');
     console.log('===========================================================================================================================================');
     for (i in res) {
       if (res[i].item_id < 10) res[i].item_id = " " + res[i].item_id;
@@ -31,6 +31,7 @@ function makeTable() {
     console.log('===========================================================================================================================================\n');
     promptCustomerForItem(res);
   });
+
 }
 
 function promptCustomerForItem(products) {
@@ -41,19 +42,16 @@ function promptCustomerForItem(products) {
     message: 'What would you like to purchase? ',
     filter: (input) => parseInt(input, 10),
     validate: (input) => {
-      if (Number.isNaN(input)) return 'Enter a valid product id #';
+      if (Number.isNaN(input) || input > products.length || input < 1) return 'Enter a valid product id #';
+      if (products[input-1].stock_quantity == 0) return 'Sorry, none in stock!';
       return true;
     }
   }).then((res) => {
-    res.choice -= 1;
-    if (products[res.choice].stock_quantity == 0) {
-      console.log("Sorry, none in stock!");
-      return promptCustomer(products);
-    }
-    console.log('You chose ' + products[res.choice].product_name + ".\n");
-
-    promptCustomerForQuantity(products[res.choice]);
+    console.log('You chose ' + products[res.choice-1].product_name + "\n");
+    
+    promptCustomerForQuantity(products[res.choice-1]);
   });
+
 }
 
 function promptCustomerForQuantity(product) {
@@ -69,6 +67,7 @@ function promptCustomerForQuantity(product) {
       return true;
     }
   }).then((userInput) => updateProductsSetQuantity(product, userInput));
+
 }
 
 function updateProductsSetQuantity(product, userInput) {
@@ -81,24 +80,26 @@ function updateProductsSetQuantity(product, userInput) {
 
       chargeCustomer(product, userInput.quantity);
     });
+
 }
 
 function chargeCustomer(product, quantity) {
 
   var subtotal = (product.price / 100 * quantity).toFixed(2);
-  var tax = (product.price * quantity * 0.05 / 100).toFixed(2);
+  var tax = (subtotal * 0.055).toFixed(2);
   var total = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
-  console.log('\nYou just purchased (' + quantity + '):');
-  console.log(product.product_name + " ($" + (product.price / 100).toFixed(2) + ")");
-  console.log('x ' + quantity 
-    + "............................................................................($" 
-    + subtotal + ")");
-  console.log("Sales tax:......................................................................($" 
-    + tax + ")");
-  console.log("Total:.........................................................................($" 
-    + total + ")\n");
-  console.log("We've just charged $" 
-    + total + " to your credit card. You will receive no email confirmation. Thanks!\n");
+  var dots = "................................................................................";
+
+  console.log(`
+    You just purchased (${quantity}):
+    ${product.product_name} ($${(product.price / 100).toFixed(2)})
+
+    x${quantity} ${dots.slice(quantity.toString().concat(subtotal).length)} ($${subtotal})
+    Sales tax: ${dots.slice(9+tax.length)} ($${tax})
+    Total: ${dots.slice(5+total.length)} ($${total})
+
+    We've just charged $${total} to your credit card. You will receive no email confirmation. Thanks!
+  `);
 
   // prompt customer for continue
   inquirer.prompt({
@@ -107,6 +108,7 @@ function chargeCustomer(product, quantity) {
     message: 'Would you like to make another purchase? (Y/N):'
   }).then((res) => {
     if (res.choice.toLowerCase() == 'y') makeTable();
-    process.exit();
+    else process.exit();
   });
+
 }
