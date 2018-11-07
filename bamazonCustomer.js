@@ -16,7 +16,7 @@ connection.connect((err) => {
 });
 
 function makeTable() {
-  
+
   connection.query('SELECT * FROM products', (err, res) => {
     console.log('id || Product Name                                                                   || Department           || Price    || Quantity       ');
     console.log('===========================================================================================================================================');
@@ -75,7 +75,7 @@ function updateProductsSetQuantity(product, userInput) {
 
   connection.query('UPDATE products SET stock_quantity = ? WHERE item_id = ?', 
     [product.stock_quantity - userInput.quantity, product.item_id],
-    function(err, res) {
+    (err, res) => {
 
       if (err) return console.log(err);
 
